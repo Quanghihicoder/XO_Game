@@ -67,27 +67,60 @@ const Game = ({ mode }) => {
   }
 
   const calculateWinner = (squares, size, winCondition) => {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        setWinSquares([a,b,c]);
-        return squares[a];
+    // Find all possible group of win squares
+    const lines = [];
+
+    // Rows
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j <= size - winCondition; j++) {
+        const line = [];
+        for (let k = 0; k < winCondition; k++) {
+          line.push(i * size + j + k);
+        }
+        lines.push(line);
       }
     }
+
+    // Columns
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j <= size - winCondition; j++) {
+        const line = [];
+        for (let k = 0; k < winCondition; k++) {
+          line.push((j + k) * size + i);
+        }
+        lines.push(line);
+      }
+    }
+
+    // Diagonals
+    for (let i = 0; i <= size - winCondition; i++) {
+      for (let j = 0; j <= size - winCondition; j++) {
+        const line1 = [];
+        const line2 = [];
+        for (let k = 0; k < winCondition; k++) {
+          line1.push((i + k) * size + (j + k));
+          line2.push((i + k) * size + (j + winCondition - 1 - k));
+        }
+        lines.push(line1);
+        lines.push(line2);
+      }
+    }
+
+    let allWinSquares = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, ...rest] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && rest.every(index => squares[a] === squares[index])) {
+        // Merge lines[i] into allWinSquares and remove duplicates
+        allWinSquares = [...new Set([...allWinSquares, ...lines[i]])];
+      }
+    }
+
+    if (allWinSquares.length > 0) {
+      setWinSquares(allWinSquares)
+      return true;
+    }
+    
     return null;
   };
 
