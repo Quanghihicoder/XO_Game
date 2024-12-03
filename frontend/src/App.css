@@ -102,3 +102,7 @@ a:link {
 .Button.Gray {
     background-color: gray;
 }
+
+.Button.Red {
+    background-color: red;
+}

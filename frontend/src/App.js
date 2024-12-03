@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css';
 import Home from "./pages/Home"
 import Game from "./pages/Game"
+import Room from "./pages/Room"
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
             <Route path="game/">
               <Route index element={<Game mode={1} />}/>
               <Route path="computer" element={<Game mode={2}/>}/>
-              <Route path="online" element={<Game mode={3} />}/>
+              <Route path="newroom" element={<Room />}/>
             </Route>
           </Route>
         </Routes>

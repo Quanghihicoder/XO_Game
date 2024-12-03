@@ -87,7 +87,7 @@ const Home = () => {
             className="Button Big Orange"
             onClick={() => {
               updateSettings();
-              navigate("/game/online");
+              navigate("/game/newroom");
             }}
           >
             Play Online

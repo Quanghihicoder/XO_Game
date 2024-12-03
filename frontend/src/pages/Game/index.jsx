@@ -51,7 +51,7 @@ const Game = ({ mode }) => {
     setWinner("Draw");
   };
 
-  const handleClick = async (i) => {
+  const handleClick = (i) => {
     const newSquares = squares.slice();
     if (calculateWinner(newSquares, size, winCondition) || newSquares[i]) {
       return;
