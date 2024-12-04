@@ -46,7 +46,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: true, 
+    origin: true,
     methods: ["GET", "POST"],
   },
 });
@@ -77,7 +77,7 @@ app.use(express.static(path.join(dirname, "./xogame/")));
 
 // Route to serve the XO game HTML file
 app.get("/xogame*", function (req, res) {
-  res.sendFile(path.join(__dirname, "./xogame/index.html"));
+  res.sendFile(path.join(dirname, "./xogame/index.html"));
 });
 
 // Sync database
@@ -101,10 +101,10 @@ io.on("connection", (socket) => {
     }
 
     if (rooms[roomId].players.length < 2) {
-      let player = "X" 
-      
-      if (rooms[roomId].players.some(player => player.play === "X")) {
-        player = "O"
+      let player = "X";
+
+      if (rooms[roomId].players.some((player) => player.play === "X")) {
+        player = "O";
       }
 
       rooms[roomId].players.push({ id: socket.id, play: player });
@@ -179,7 +179,7 @@ io.on("connection", (socket) => {
     // Iterate through all rooms to find the one the user was in
     for (const roomId in rooms) {
       if (
-        rooms[roomId].players.some(player => player.id === socket.id) ||
+        rooms[roomId].players.some((player) => player.id === socket.id) ||
         rooms[roomId].viewers.includes(socket.id)
       ) {
         socket.leave(roomId);
