@@ -4,6 +4,7 @@ import "../../styles/room.css";
 import { useNavigate } from "react-router-dom";
 import reload from "../../icons/reload.png";
 import gameControl from "../../icons/game-controller.png";
+import axios from 'axios'
 
 const Room = () => {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ const Room = () => {
   const winCondition = Number(useSelector((state) => state.winingCondition));
 
   const [overlay, setOverlay] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [roomId, setRoomId] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const goBack = () => {
     navigate(-1);
@@ -26,13 +30,61 @@ const Room = () => {
     setOverlay(false);
   };
 
-  const handleNewPublicRoom = () => {};
+  const handleNewPublicRoom = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/rooms`, {
+        status: "public",
+        mapSize: size,
+        winCondition: winCondition,
+      });
+      navigate(`/game/room/${response.data.id}`);
+    } catch (error) {
+      console.error("Error creating public room:", error);
+    }
+  };
 
-  const handleNewPrivateRoom = () => {};
+  const handleNewPrivateRoom = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/rooms`, {
+        status: "private",
+        mapSize: size,
+        winCondition: winCondition,
+      });
+      navigate(`/game/room/${response.data.id}`);
+    } catch (error) {
+      console.error("Error creating public room:", error);
+    }
+  };
 
-  const handleJoinRoom = ()=> {};
+  const handleJoinRoom = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/rooms/${roomId}`);
+      if (response.status === 200) {
+        navigate(`/game/room/${roomId}`);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setErrorMessage("Room not found");
+      } else {
+        console.error("Error checking room:", error);
+      }
+    }
+  };
 
-  const handleReload = ()=> {};
+  const handleReload = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/rooms?status=public&mapSize=${size}&winCondition=${winCondition}`
+      );
+      setRooms(response.data);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleReload();
+  }, []);
 
   return (
     <div className="Container Room">
@@ -81,7 +133,9 @@ const Room = () => {
             <div className="Input">
               <div>
                 <p className="InputTitle">Enter room ID or join a room below</p>
-                <input className="InputBox" type="text" />
+                <input className="InputBox" type="text"  value={roomId}
+                  onChange={(e) => setRoomId(e.target.value)} />
+                {errorMessage && <p className="ErrorMessage">{errorMessage}</p>}
               </div>
               <button onClick={()=>handleJoinRoom()}>Join</button>
             </div>
@@ -91,46 +145,18 @@ const Room = () => {
             </div>
           </div>
 
-          <div className="Item" onClick={()=>handleJoinRoom()}>
-            <img src={gameControl} alt="Game Icon" width={18} height={18}/>
-            <p className="Name">Room: shhskaaa</p>
-          </div>
+          {rooms.length === 0 && <p>No public rooms have the same game settings</p>}
 
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
-
-          <div className="Item">
-            <p className="Name">shhskaaa</p>
-          </div>
+          {rooms.map((room) => (
+            <div
+              key={room.id}
+              className="Item"
+              onClick={() => navigate(`/game/room/${room.id}`)}
+            >
+              <img src={gameControl} alt="Game Icon" width={18} height={18} />
+              <p className="Name">Room: {room.id}</p>
+            </div>
+          ))}
          
         </div>
       </div>

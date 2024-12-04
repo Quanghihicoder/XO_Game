@@ -106,3 +106,7 @@ a:link {
 .Button.Red {
     background-color: red;
 }
+
+.ErrorMessage {
+    color: red;
+}

@@ -45,6 +45,11 @@
     font-weight: bold;
 }
 
+.Game .Body .Info .Player .Turn {
+    width: 150px;
+    text-align: center;
+}
+
 .Game .Body .Info .Status {
     text-align: center;
     display: flex;
