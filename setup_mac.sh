@@ -16,7 +16,7 @@ npm install
 
 # Delete all .env files and create a new one with the specified content
 rm -f .env
-echo "REACT_APP_API_URL=http://localhost:8000" > .env
+echo "REACT_APP_API_URL=http://localhost:8002" > .env
 
 # Run npm build for macOS
 npm run build-mac
