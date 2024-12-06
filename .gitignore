@@ -24,3 +24,47 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+
+
+# terraform
+/devops/.env
+#direnv files
+/devops/.envrc
+/devops/bin/
+
+# Ignore logs
+/devops/log/
+/devops/terraform-provider-azure-devops
+/devops/terraform.log
+/devops/crash.log
+
+#  Local .terraform directories
+/devops/**/.terraform/*
+/devops/.terraform
+/devops/.terraform.lock.hcl
+
+# .tfstate files
+/devops/*.tfstate
+/devops/*.tfstate.*
+
+# .tfvars files
+/devops/*.tfvars
+
+# unwanted binary file
+/devops/**/debug.test
+/devops/dist
+
+#GoLand Editor configuration
+/devops/.idea
+/devops/.fleet
+/devops/.DS_Store
+
+# Ignore IDE files
+/devops/.vs/
+/devops/.idea/
+/devops/.vscode/
+
+# Ignore logs and temporary files
+/devops/*.log
+/devops/*.tmp
+/devops/*.bak
