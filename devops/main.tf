@@ -195,6 +195,8 @@ resource "aws_instance" "xo_game_server" {
 
   user_data = "${file("setup_server.sh")}"
 
+  key_name = "personal"
+
   tags = {
     Name = "xo_game_server_instance"
   }
