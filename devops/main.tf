@@ -193,7 +193,7 @@ resource "aws_instance" "xo_game_server" {
   subnet_id = aws_subnet.xo_game_server_subnet_public.id
   vpc_security_group_ids = [ aws_security_group.xo_game_server.id ]
 
-  user_data = "${file("setup_server.sh")}"
+  # user_data = "${file("setup_server.sh")}"
 
   key_name = "personal"
 

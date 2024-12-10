@@ -37,6 +37,5 @@ sudo chmod -R 777 ~/Downloads/XO_Game
 cd ./XO_Game
 
 # Run script 
-sudo chmod -R 777 ./setup_mac.sh
-
-./setup_mac.sh -u root -p root -r 
+sudo chmod 755 ./setup_mac.sh
+sudo ./setup_mac.sh -u root -p root -r
