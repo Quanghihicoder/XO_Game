@@ -185,33 +185,6 @@ resource "aws_vpc_security_group_ingress_rule" "xo_game_server_allow_ssh" {
   to_port           = 22
 }
 
-resource "aws_iam_role" "ec2_instance_connect" {
-  name = "ec2_instance_connect"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        },
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ec2_instance_connect_policy" {
-  role       = aws_iam_role.ec2_instance_connect.name
-  policy_arn = "arn:aws:iam::aws:policy/EC2InstanceConnect"
-}
-
-resource "aws_iam_instance_profile" "ec2_instance_connect" {
-  name = "ec2_instance_connect"
-  role = aws_iam_role.ec2_instance_connect.name
-}
-
 resource "aws_instance" "xo_game_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
@@ -223,8 +196,6 @@ resource "aws_instance" "xo_game_server" {
   user_data = "${file("setup_server.sh")}"
 
   key_name = "personal"
-
-  iam_instance_profile = aws_iam_instance_profile.ec2_instance_connect.name
 
   tags = {
     Name = "xo_game_server_instance"

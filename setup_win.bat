@@ -1,11 +1,44 @@
 @echo off
 setlocal
 
-:: Prompt for MySQL username
-set /p MYSQL_USER=Enter MySQL username: 
+:: Default values for MySQL username, password, and remote flag
+set MYSQL_USER=
+set MYSQL_PASSWORD=
+set REMOTE=false
 
-:: Prompt for MySQL password
-set /p MYSQL_PASSWORD=Enter MySQL password: 
+:: Parse command line arguments
+:parse_args
+if "%~1"=="" goto end_parse_args
+if "%~1"=="-u" (
+    set MYSQL_USER=%~2
+    shift
+    shift
+    goto parse_args
+)
+if "%~1"=="-p" (
+    set MYSQL_PASSWORD=%~2
+    shift
+    shift
+    goto parse_args
+)
+if "%~1"=="-r" (
+    set REMOTE=true
+    shift
+    goto parse_args
+)
+shift
+goto parse_args
+:end_parse_args
+
+:: Prompt for MySQL username if not provided
+if "%MYSQL_USER%"=="" (
+    set /p MYSQL_USER=Enter MySQL username: 
+)
+
+:: Prompt for MySQL password if not provided
+if "%MYSQL_PASSWORD%"=="" (
+    set /p MYSQL_PASSWORD=Enter MySQL password: 
+)
 
 :: Login to MySQL and run init.sql
 mysql -u %MYSQL_USER% -p%MYSQL_PASSWORD% < ./backend/sql/init.sql
@@ -40,6 +73,12 @@ set MYSQL_USER=
 set MYSQL_PASSWORD=
 
 :: Start the backend
-npm start
+if "%REMOTE%"=="true" (
+    pm2 start npm --name "XO_Game" -- start
+    pm2 startup systemd
+    pm2 save
+) else (
+    npm start
+)
 
 endlocal

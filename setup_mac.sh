@@ -1,11 +1,30 @@
 #!/bin/bash
 
-# Prompt for MySQL username
-read -p "Enter MySQL username: " MYSQL_USER
+# Default values for MySQL username, password, and remote flag
+MYSQL_USER=""
+MYSQL_PASSWORD=""
+REMOTE=false
 
-# Prompt for MySQL password
-read -sp "Enter MySQL password: " MYSQL_PASSWORD
-echo
+# Parse command line arguments
+while getopts u:p:r flag
+do
+    case "${flag}" in
+        u) MYSQL_USER=${OPTARG};;
+        p) MYSQL_PASSWORD=${OPTARG};;
+        r) REMOTE=true;;
+    esac
+done
+
+# Prompt for MySQL username if not provided
+if [ -z "$MYSQL_USER" ]; then
+    read -p "Enter MySQL username: " MYSQL_USER
+fi
+
+# Prompt for MySQL password if not provided
+if [ -z "$MYSQL_PASSWORD" ]; then
+    read -sp "Enter MySQL password: " MYSQL_PASSWORD
+    echo
+fi
 
 # Login to MySQL and run init.sql
 mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" < ./backend/sql/init.sql
@@ -40,4 +59,10 @@ unset MYSQL_USER
 unset MYSQL_PASSWORD
 
 # Start the backend
-npm start
+if [ "$REMOTE" = true ]; then
+    pm2 start npm --name "XO_Game" -- start
+    pm2 startup systemd
+    pm2 save
+else
+    npm start
+fi
