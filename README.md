@@ -1,3 +1,7 @@
+# Demo Video
+
+YouTube: https://youtu.be/SIZKYpOCskg
+
 # Windows
 
 Run `setup_win.bat`
