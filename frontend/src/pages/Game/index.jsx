@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import axios from "axios";
 
-const socket = io(process.env.REACT_APP_API_URL);
+const socket = io.connect(process.env.REACT_APP_API_URL);
 
 const Game = ({ mode }) => {
   const navigate = useNavigate();
