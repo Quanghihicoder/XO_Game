@@ -17,18 +17,19 @@ sudo apt-get install mysql-server -y
 sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'root';"
 sudo mysql -e "FLUSH PRIVILEGES;"
 
+# Start MySQL and Node.js services
+sudo systemctl start mysql
+sudo systemctl enable mysql
+
 # Install PM2
 sudo npm install -g pm2
 
 # Create Downloads directory if it doesn't exist
-mkdir -p ~/Downloads
-
-# Set permissions for the Downloads directory
-sudo chmod 777 ~/Downloads
+sudo mkdir -p ~/Downloads
 
 # Clone the Git repository to the Downloads folder
 cd ~/Downloads
-git clone https://github.com/Quanghihicoder/XO_Game.git
+sudo git clone https://github.com/Quanghihicoder/XO_Game.git
 
 # Set permissions for the cloned repository
 sudo chmod -R 777 ~/Downloads/XO_Game
@@ -38,4 +39,4 @@ cd ./XO_Game
 
 # Run script 
 sudo chmod 755 ./setup_mac.sh
-sudo ./setup_mac.sh -u root -p root -r
+./setup_mac.sh -u root -p root -r

@@ -119,30 +119,21 @@ resource "aws_network_acl" "xo_game_server_nacl" {
   }
 
 
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 104
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 8000
+    to_port    = 8000
+  }
+
   egress {
     protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 80
-    to_port    = 80
-  }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 102
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 32768
+    from_port  = 0
     to_port    = 65535
   }
 
@@ -177,12 +168,26 @@ resource "aws_vpc_security_group_ingress_rule" "xo_game_server_allow_http" {
   to_port           = 80
 }
 
+resource "aws_vpc_security_group_ingress_rule" "xo_game_server_allow_webserver" {
+  security_group_id = aws_security_group.xo_game_server.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "tcp"
+  from_port         = 8000
+  to_port           = 8000
+}
+
 resource "aws_vpc_security_group_ingress_rule" "xo_game_server_allow_ssh" {
   security_group_id = aws_security_group.xo_game_server.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "tcp"
   from_port         = 22
   to_port           = 22
+}
+
+resource "aws_vpc_security_group_egress_rule" "xo_game_server_allow_all" {
+  security_group_id = aws_security_group.xo_game_server.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
 }
 
 resource "aws_instance" "xo_game_server" {
@@ -193,7 +198,7 @@ resource "aws_instance" "xo_game_server" {
   subnet_id = aws_subnet.xo_game_server_subnet_public.id
   vpc_security_group_ids = [ aws_security_group.xo_game_server.id ]
 
-  # user_data = "${file("setup_server.sh")}"
+  user_data = "${file("setup_server.sh")}"
 
   key_name = "personal"
 
