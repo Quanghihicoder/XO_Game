@@ -192,7 +192,7 @@ resource "aws_vpc_security_group_egress_rule" "xo_game_server_allow_all" {
 
 resource "aws_instance" "xo_game_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t2.large"
 
   associate_public_ip_address = true
   subnet_id = aws_subnet.xo_game_server_subnet_public.id
