@@ -211,7 +211,7 @@ app.use(function (req, res) {
 });
 
 // Start the server
-const PORT = process.env.PORT || 8000;
+const PORT = 8000;
 
 server.listen(PORT, (error) => {
   if (!error) {

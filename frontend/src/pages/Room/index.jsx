@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import "../../styles/room.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import reload from "../../icons/reload.png";
 import gameControl from "../../icons/game-controller.png";
 import axios from 'axios'
 
 const Room = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Retrieve game settings from Redux store
   const size = Number(useSelector((state) => state.size));
@@ -19,7 +20,7 @@ const Room = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const goBack = () => {
-    navigate(-1);
+    navigate("/", {replace: true});
   };
 
   const handleNewRoom = () => {
@@ -119,7 +120,7 @@ const Room = () => {
 
       <div className="Header">
         <button className="Button Medium Navy" onClick={() => goBack()}>
-          Back
+          Home
         </button>
 
         <button className="Button Medium Green" onClick={() => handleNewRoom()}>
@@ -141,7 +142,7 @@ const Room = () => {
             </div>
 
             <div>
-              <button className="Reload" onClick={()=>handleReload()}><img src={reload} alt="Reload Icon" width={30} height={30}/></button>
+              <button className="Reload" onClick={()=>handleReload()}><p>Reload</p><img src={reload} alt="Reload Icon" width={30} height={30}/></button>
             </div>
           </div>
 

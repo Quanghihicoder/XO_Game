@@ -4,8 +4,42 @@
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
-# Install Apache HTTP server
-sudo apt-get install apache2 -y
+# Install NGINX
+sudo apt install nginx -y
+
+# Route port 80 to 8000
+
+NGINX_CONF="/etc/nginx/sites-available/default"
+PORT_FORWARD=8000
+
+sudo tee $NGINX_CONF > /dev/null <<EOL
+server {
+    listen 80;
+    server_name localhost;
+    
+    location / {
+        proxy_pass http://127.0.0.1:$PORT_FORWARD;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    }
+}
+EOL
+
+# Test new nginx setup
+sudo nginx -t
+
+# Restart nginx
+if [ $? -eq 0 ]; then
+    echo "Restarting Nginx..."
+    sudo systemctl restart nginx
+else
+    echo "Nginx configuration test failed. Please check manually."
+    exit 1
+fi
+
+# Allow traffic
+sudo ufw allow 80/tcp
 
 # Install Node.js and npm
 sudo apt install curl

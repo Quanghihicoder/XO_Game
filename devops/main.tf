@@ -207,3 +207,9 @@ resource "aws_instance" "xo_game_server" {
   }
 }
 
+output "xo_game_server_url" {
+  description = "Public IP address of the XO Game Server EC2 instance"
+  value       = join("", ["http://", aws_instance.xo_game_server.public_ip, ":8000/xogame"])
+}
+
+

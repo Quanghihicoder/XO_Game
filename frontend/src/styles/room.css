@@ -117,7 +117,18 @@
 }
 
 .Room .Body .List .Header .Reload {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
     background-color: transparent;
     border: transparent !important;
+
+    
 }
 
+.Room .Body .List .Header .Reload:active {
+    background-color: #E0E0E0;
+}

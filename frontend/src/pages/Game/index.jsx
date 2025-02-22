@@ -31,7 +31,12 @@ const Game = ({ mode }) => {
   const [isViewer, setIsViewer] = useState(false);
 
   const goBack = () => {
-    navigate(-1);
+    if(mode === 3) {
+      navigate("/game/newroom", { replace: true })
+    } 
+    else {
+      navigate("/", { replace: true })
+    }
   };
 
   const handleNewGame = () => {
@@ -430,7 +435,7 @@ const Game = ({ mode }) => {
     <div className="Container Game">
       <div className="Header">
         <button className="Button Medium Navy" onClick={() => goBack()}>
-          Back
+          {mode === 3 ? "Back" : "Home" }
         </button>
 
         {mode === 3 && <div>{isViewer && <p>"You are viewing!"</p>} <p>Room ID: {id}</p> {!isViewer && <p>Player: {player}</p>}</div>}
