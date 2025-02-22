@@ -4,14 +4,16 @@
 MYSQL_USER=""
 MYSQL_PASSWORD=""
 REMOTE=false
+API_URL="http://localhost:8000"
 
 # Parse command line arguments
-while getopts u:p:r flag
+while getopts u:p:ra: flag
 do
     case "${flag}" in
         u) MYSQL_USER=${OPTARG};;
         p) MYSQL_PASSWORD=${OPTARG};;
         r) REMOTE=true;;
+        a) API_URL=${OPTARG};;
     esac
 done
 
@@ -35,7 +37,7 @@ npm install
 
 # Delete all .env files and create a new one with the specified content
 rm -f .env
-echo "REACT_APP_API_URL=http://localhost:8000" > .env
+echo "REACT_APP_API_URL=$API_URL" > .env
 
 # Run npm build for macOS
 npm run build-mac
