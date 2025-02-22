@@ -14,24 +14,8 @@ PORT_FORWARD=8000
 # Create NGINX configuration
 cat > /etc/nginx/sites-available/default <<EOL
     server {
-        listen 80;
+        listen 8000;
         server_name _;
-
-        location / {
-            proxy_pass http://127.0.0.1:8000;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
-        }
-    }
-
-    server {
-        listen 443 ssl;
-        server_name _;
-
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
         location / {
             proxy_pass http://127.0.0.1:8000;
