@@ -3,6 +3,11 @@ variable "key_name" {
   type        = string
 }
 
+variable "email" {
+  description = "Email for the SSL certificate"
+  type        = string
+}
+
 variable "domain_name" {
   description = "Domain name for the SSL certificate"
   type        = string

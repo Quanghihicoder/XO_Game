@@ -190,6 +190,7 @@ resource "aws_vpc_security_group_egress_rule" "xo_game_server_allow_all" {
   ip_protocol       = "-1"
 }
 
+
 resource "aws_instance" "xo_game_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.large"
@@ -198,18 +199,31 @@ resource "aws_instance" "xo_game_server" {
   subnet_id = aws_subnet.xo_game_server_subnet_public.id
   vpc_security_group_ids = [ aws_security_group.xo_game_server.id ]
 
-  user_data = "${file("setup_server.sh")}"
+  # user_data = "${file("setup_server.sh")}"
 
-  key_name = "personal"
+  user_data = templatefile("setup_server.sh", { 
+    domain_name = var.domain_name ,
+    email = var.email
+  })
+
+  key_name = var.key_name
 
   tags = {
     Name = "xo_game_server_instance"
   }
 }
 
-output "xo_game_server_url" {
-  description = "Public IP address of the XO Game Server EC2 instance"
-  value       = join("", ["http://", aws_instance.xo_game_server.public_ip, "/xogame"])
+resource "aws_route53_record" "web" {
+  zone_id = var.hosted_zone_id
+  name    = var.domain_name
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.xo_game_server.public_ip]
 }
 
 
+# Output ALB URL
+output "xo_game_server_url" {
+  description = "URL of the XO Game Server"
+  value       = "https://${var.domain_name}/xogame"
+}

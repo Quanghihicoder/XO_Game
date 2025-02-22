@@ -4,35 +4,46 @@
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
-# Install NGINX
-sudo apt install nginx openssl -y
+# Install Certbot
+sudo apt install -y nginx certbot python3-certbot-nginx ufw
 
-# Route port 80 to 8000
-NGINX_CONF="/etc/nginx/sites-available/default"
-PORT_FORWARD=8000
+# Enable UFW firewall
+sudo ufw allow 'Nginx Full'
+sudo ufw allow OpenSSH
+sudo ufw --force enable
+
+# Obtain SSL certificate
+sudo certbot --nginx -d ${domain_name} --non-interactive --agree-tos -m ${email} --redirect
 
 # Create NGINX configuration
-cat > /etc/nginx/sites-available/default <<EOL
-    server {
-        listen 8000;
-        server_name _;
+sudo cat > /etc/nginx/sites-available/default <<EOF
+server {
+    listen 80;
+    server_name ${domain_name};
+    return 301 https://\$host\$request_uri;
+}
 
-        location / {
-            proxy_pass http://127.0.0.1:8000;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
-        }
+server {
+    listen 443 ssl;
+    server_name ${domain_name};
+
+    ssl_certificate /etc/letsencrypt/live/${domain_name}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${domain_name}/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     }
-EOL
-
-# Generate a self-signed SSL certificate (for testing)
-sudo mkdir -p /etc/nginx/ssl
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt -subj "/C=US/ST=State/L=City/O=Company/CN=example.com"
+}
+EOF
 
 # Test and restart nginx
 sudo nginx -t && sudo systemctl restart nginx
+
+# Setup auto-renewal
+sudo echo "0 0 * * * root certbot renew --quiet" >> /etc/crontab
 
 # Allow necessary traffic
 sudo ufw allow 80/tcp
