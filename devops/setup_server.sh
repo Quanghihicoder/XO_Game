@@ -5,41 +5,54 @@ sudo apt-get update -y
 sudo apt-get upgrade -y
 
 # Install NGINX
-sudo apt install nginx -y
+sudo apt install nginx openssl -y
 
 # Route port 80 to 8000
-
 NGINX_CONF="/etc/nginx/sites-available/default"
 PORT_FORWARD=8000
 
-sudo tee $NGINX_CONF > /dev/null <<EOL
-server {
-    listen 80;
-    server_name localhost;
-    
-    location / {
-        proxy_pass http://127.0.0.1:$PORT_FORWARD;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+# Create NGINX configuration
+cat > /etc/nginx/sites-available/default <<EOL
+    server {
+        listen 80;
+        server_name _;
+
+        location / {
+            proxy_pass http://127.0.0.1:8000;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+        }
     }
-}
+
+    server {
+        listen 443 ssl;
+        server_name _;
+
+        ssl_certificate /etc/nginx/ssl/nginx.crt;
+        ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+        location / {
+            proxy_pass http://127.0.0.1:8000;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+        }
+    }
 EOL
 
-# Test new nginx setup
-sudo nginx -t
+# Generate a self-signed SSL certificate (for testing)
+sudo mkdir -p /etc/nginx/ssl
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt -subj "/C=US/ST=State/L=City/O=Company/CN=example.com"
 
-# Restart nginx
-if [ $? -eq 0 ]; then
-    echo "Restarting Nginx..."
-    sudo systemctl restart nginx
-else
-    echo "Nginx configuration test failed. Please check manually."
-    exit 1
-fi
+# Test and restart nginx
+sudo nginx -t && sudo systemctl restart nginx
 
-# Allow traffic
+# Allow necessary traffic
 sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
 
 # Install Node.js and npm
 sudo apt install curl
