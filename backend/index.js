@@ -49,6 +49,7 @@ const io = new Server(server, {
     origin: true,
     methods: ["GET", "POST"],
   },
+  path: "/xogame/socket.io"
 });
 
 app.use(bodyParser.json());
@@ -56,18 +57,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("dev"));
 
-// Root route to display a list of URLs
-app.use(express.static(path.join(dirname, "./static/")));
-
-app.get("/", (req, res) => {
-  res.set("Content-Type", "text/html");
-  res.sendFile(path.join(dirname, "./static/index.html"));
-});
-
 // Route for API endpoints
-app.use("/api", router);
+app.use("/xogame/api", router);
 
-app.get("/api", (req, res) => {
+app.get("/xogame/api", (req, res) => {
   res.set("Content-Type", "text/html");
   res.status(200).send("<p>Welcome to Quang's APIs</p>");
 });
@@ -211,7 +204,7 @@ app.use(function (req, res) {
 });
 
 // Start the server
-const PORT = 8000;
+const PORT = 8002;
 
 server.listen(PORT, (error) => {
   if (!error) {
