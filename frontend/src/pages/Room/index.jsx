@@ -33,7 +33,7 @@ const Room = () => {
 
   const handleNewPublicRoom = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/rooms`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/xogame/api/rooms`, {
         status: "public",
         mapSize: size,
         winCondition: winCondition,
@@ -46,7 +46,7 @@ const Room = () => {
 
   const handleNewPrivateRoom = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/rooms`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/xogame/api/rooms`, {
         status: "private",
         mapSize: size,
         winCondition: winCondition,
@@ -59,7 +59,7 @@ const Room = () => {
 
   const handleJoinRoom = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/rooms/${roomId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/xogame/api/rooms/${roomId}`);
       if (response.status === 200) {
         navigate(`/game/room/${roomId}`);
       }
@@ -75,7 +75,7 @@ const Room = () => {
   const handleReload = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/rooms?status=public&mapSize=${size}&winCondition=${winCondition}`
+        `${process.env.REACT_APP_API_URL}/xogame/api/rooms?status=public&mapSize=${size}&winCondition=${winCondition}`
       );
       setRooms(response.data);
     } catch (error) {

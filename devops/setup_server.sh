@@ -102,4 +102,4 @@ cd ./XO_Game
 
 # Run script 
 sudo chmod 755 ./setup_mac.sh
-./setup_mac.sh -u root -p root -r -a https://${domain_name}/xogame
+./setup_mac.sh -u root -p root -r -a https://${domain_name}

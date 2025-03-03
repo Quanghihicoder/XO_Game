@@ -375,7 +375,7 @@ const Game = ({ mode }) => {
       const fetchRoomDetails = async () => {
         try {
           const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/api/rooms/${id}`
+            `${process.env.REACT_APP_API_URL}/xogame/api/rooms/${id}`
           );
           if (response.status === 200) {
             setSize(response.data.mapSize);
