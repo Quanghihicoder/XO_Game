@@ -4,7 +4,7 @@
 MYSQL_USER=""
 MYSQL_PASSWORD=""
 REMOTE=false
-API_URL="http://localhost:8000"
+API_URL="http://localhost:8002"
 
 # Parse command line arguments
 while getopts u:p:ra: flag

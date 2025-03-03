@@ -56,14 +56,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("dev"));
 
-// Root route to display a list of URLs
-app.use(express.static(path.join(dirname, "./static/")));
-
-app.get("/", (req, res) => {
-  res.set("Content-Type", "text/html");
-  res.sendFile(path.join(dirname, "./static/index.html"));
-});
-
 // Route for API endpoints
 app.use("/api", router);
 
@@ -76,9 +68,10 @@ app.get("/api", (req, res) => {
 app.use(express.static(path.join(dirname, "./xogame/")));
 
 // Route to serve the XO game HTML file
-app.get("/xogame*", function (req, res) {
+app.get("/*", function (req, res) {
   res.sendFile(path.join(dirname, "./xogame/index.html"));
 });
+
 
 // Sync database
 sequelize
@@ -211,7 +204,7 @@ app.use(function (req, res) {
 });
 
 // Start the server
-const PORT = 8000;
+const PORT = 8002;
 
 server.listen(PORT, (error) => {
   if (!error) {
