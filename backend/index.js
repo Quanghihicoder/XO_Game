@@ -49,6 +49,7 @@ const io = new Server(server, {
     origin: true,
     methods: ["GET", "POST"],
   },
+  path: "/xogame/socket.io",
 });
 
 app.use(bodyParser.json());
@@ -64,11 +65,11 @@ app.get("/api", (req, res) => {
   res.status(200).send("<p>Welcome to Quang's APIs</p>");
 });
 
-// Serve static files for the XO game
-app.use(express.static(path.join(dirname, "./xogame/")));
+// Serve static files correctly under /xogame/static
+app.use("/xogame", express.static(path.join(dirname, "./xogame")));
 
 // Route to serve the XO game HTML file
-app.get("/*", function (req, res) {
+app.get("/xogame/*", function (req, res) {
   res.sendFile(path.join(dirname, "./xogame/index.html"));
 });
 

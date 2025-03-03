@@ -7,7 +7,7 @@ import Room from "./pages/Room";
 function App() {
   return (
     <div className="App">
-      <BrowserRouter basename="/">
+      <BrowserRouter basename="/xogame">
         <Routes>
           <Route path="/">
             <Route index element={<Home />} />

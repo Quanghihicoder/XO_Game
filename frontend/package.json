@@ -1,6 +1,6 @@
 {
   "name": "xogame",
-  "homepage": "../xogame",
+  "homepage": "/xogame",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
