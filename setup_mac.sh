@@ -54,6 +54,7 @@ rm -f .env
   echo "DB_PASSWORD=$MYSQL_PASSWORD"
   echo "DB_HOST=localhost"
   echo "DB_DIALECT=mysql"
+  echo "ALLOW_ORIGIN=$API_URL"
 } > .env
 
 # Clear MySQL username and password variables

@@ -44,18 +44,39 @@ const sendError = (req, res) => {
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = process.env.ALLOW_ORIGIN?.split(',') || [];
+
+// CORS configuration
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(null,false);
+        }
+    },
+};
+
+// Apply CORS middleware to Express
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan("dev"));
+
+// Socket.IO configuration with CORS
 const io = new Server(server, {
   cors: {
-    origin: true,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     methods: ["GET", "POST"],
   },
   path: "/xogame/socket.io",
 });
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
-app.use(morgan("dev"));
 
 // Route for API endpoints
 app.use("/xogame/api", router);
