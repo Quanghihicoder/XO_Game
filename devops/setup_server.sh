@@ -1,19 +1,41 @@
 #!/bin/bash
 
+# Set to true to use Let's Encrypt, false for a self-signed certificate
+USE_LETSENCRYPT=false
+
 # Update and upgrade the system
 sudo apt-get update -y
 sudo apt-get upgrade -y
+sudo apt install net-tools -y
 
 # Install Certbot
-sudo apt install -y nginx certbot python3-certbot-nginx ufw
+sudo apt install -y nginx ufw
 
-# Enable UFW firewall
+# Enable UFW firewall & allow necessary traffic
 sudo ufw allow 'Nginx Full'
 sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
 sudo ufw --force enable
 
-# Obtain SSL certificate
-sudo certbot --nginx -d ${domain_name} --non-interactive --agree-tos -m ${email} --redirect
+# Create certificate
+if [ "$USE_LETSENCRYPT" = true ]; then
+    # Install Certbot
+    sudo apt install -y certbot python3-certbot-nginx
+
+    # Obtain SSL certificate
+    sudo certbot --nginx -d ${domain_name} --non-interactive --agree-tos -m ${email} --redirect
+
+    SSL_CERT="/etc/letsencrypt/live/${domain_name}/fullchain.pem"
+    SSL_KEY="/etc/letsencrypt/live/${domain_name}/privkey.pem"
+else
+    # Generate a self-signed certificate
+    sudo mkdir -p /etc/self-signed
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/self-signed/selfsigned.key -out /etc/self-signed/selfsigned.crt -subj "/CN=${domain_name}"
+    
+    SSL_CERT="/etc/self-signed/selfsigned.crt"
+    SSL_KEY="/etc/self-signed/selfsigned.key"
+fi
 
 # Create NGINX configuration
 sudo cat > /etc/nginx/sites-available/default <<EOF
@@ -27,8 +49,8 @@ server {
     listen 443 ssl;
     server_name ${domain_name};
 
-    ssl_certificate /etc/letsencrypt/live/${domain_name}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${domain_name}/privkey.pem;
+    ssl_certificate $SSL_CERT;
+    ssl_certificate_key $SSL_KEY;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -43,11 +65,10 @@ EOF
 sudo nginx -t && sudo systemctl restart nginx
 
 # Setup auto-renewal
-sudo echo "0 0 * * * root certbot renew --quiet" >> /etc/crontab
-
-# Allow necessary traffic
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
+if [ "$USE_LETSENCRYPT" = true ]; then
+    # Setup auto-renewal for Let's Encrypt
+    sudo echo "0 0 1 * * root certbot renew --quiet" >> /etc/crontab
+fi
 
 # Install Node.js and npm
 sudo apt install curl
