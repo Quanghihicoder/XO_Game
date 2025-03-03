@@ -4,7 +4,7 @@
 MYSQL_USER=""
 MYSQL_PASSWORD=""
 REMOTE=false
-API_URL="http://localhost:8002"
+API_URL="http://localhost:8002/xogame"
 
 # Parse command line arguments
 while getopts u:p:ra: flag

@@ -58,9 +58,9 @@ app.use(cors());
 app.use(morgan("dev"));
 
 // Route for API endpoints
-app.use("/api", router);
+app.use("/xogame/api", router);
 
-app.get("/api", (req, res) => {
+app.get("/xogame/api", (req, res) => {
   res.set("Content-Type", "text/html");
   res.status(200).send("<p>Welcome to Quang's APIs</p>");
 });
