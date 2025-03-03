@@ -23,7 +23,7 @@ const sendError = (req, res) => {
             <html lang="en">
             <head>
                 <meta charset="utf-8">
-                <title>NutriChief</title>
+                <title>XO Game</title>
                 <meta name="description" content="Description Goes Here">
             </head>
             <body>
