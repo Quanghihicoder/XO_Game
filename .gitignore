@@ -68,3 +68,6 @@
 /devops/*.log
 /devops/*.tmp
 /devops/*.bak
+
+# Ignore build
+/backend/xogame
